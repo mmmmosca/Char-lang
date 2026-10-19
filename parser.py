@@ -1,4 +1,3 @@
-
 PRECEDENCE = {
     "OR": 1,
     "AND": 2,
@@ -241,6 +240,9 @@ class Parser:
         elif token == "WHEN":
             self.advance()
             branches = []
+
+            if self.check("PIPE"):
+                self.advance()
 
             while True:
                 condition = self.parse_expression()
