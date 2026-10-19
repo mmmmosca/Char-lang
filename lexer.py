@@ -59,7 +59,12 @@ class Lexer:
                 result.append("AND")
 
             elif current == "!":
-                result.append("NOT")
+                if self.line[i+1] == "=":
+                    result.append("NOTEQUAL")
+                    i += 2
+                    continue
+                else:
+                    result.append("NOT")
 
             elif current == ">":
                 if self.line[i+1] == "=":
@@ -88,6 +93,12 @@ class Lexer:
 
             elif current == "}":
                 result.append("RBRACKET")
+
+            elif current == "[":
+                result.append("LSQUARE")
+
+            elif current == "]":
+                result.append("RSQUARE")
 
             elif current.isdigit():
                 j = i
@@ -141,6 +152,8 @@ class Lexer:
                     result.append("FALSE")
                 elif keyword == "import":
                     result.append("IMPORT")
+                elif keyword == "len":
+                    result.append("LEN")
                 else:
                     result.append(("IDENTIFIER", keyword))
                 i = j
