@@ -27,3 +27,10 @@ Comments start with `#`
 ## Block expressions
 
 Blocks are defined with curly braces (`{}`) and they evaluate expressions from top to bottom and return the last expression written in them
+
+## Lists
+
+Lists are defined like this:
+`[a_1, a_2, ..., a_n]`
+
+you can get the length of a list using `len`
