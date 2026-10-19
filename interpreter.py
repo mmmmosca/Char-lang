@@ -150,21 +150,6 @@ def evaluate(expression):
         name = expression[1]
         arguments = expression[2]
 
-        if name == "concat":
-            if len(arguments) != 2:
-                raise ValueError("concat expects two arguments")
-
-            left = evaluate(arguments[0])
-            right = evaluate(arguments[1])
-
-            if isinstance(left, list) and isinstance(right, list):
-                return left + right
-
-            if isinstance(left, str) and isinstance(right, str):
-                return left + right
-
-            raise ValueError("concat expects two lists or two strings")
-
         if name not in functions:
             raise ValueError(f"Function '{name}' not defined")
 
