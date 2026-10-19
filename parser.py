@@ -1,3 +1,4 @@
+
 PRECEDENCE = {
     "OR": 1,
     "AND": 2,
@@ -229,7 +230,7 @@ class Parser:
                 if self.check("COMMA"):
                     self.advance()
                 elif not self.check("ARROW"):
-                    raise SyntaxError("Expected ',' or '=>'")
+                    raise SyntaxError("Expected '=>'")
 
             self.advance()
             self.functions.add(name)
