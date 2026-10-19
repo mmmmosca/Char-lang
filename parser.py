@@ -1,8 +1,8 @@
-
 PRECEDENCE = {
     "OR": 1,
     "AND": 2,
     "EQUALS": 3,
+    "NOTEQUALS": 3,
     "GT": 4,
     "GTE": 4,
     "LT": 4,
@@ -57,7 +57,7 @@ class Parser:
         return expressions
 
     def parse_expression(self, min_precedence=1):
-        left = self.parse_prefix()
+        left = self.parse_postfix()
 
         while self.count < len(self.tokens):
             operator = self.current()
@@ -81,6 +81,21 @@ class Parser:
             left = (operator, left, right)
 
         return left
+
+    def parse_postfix(self):
+        node = self.parse_prefix()
+
+        while self.check("LSQUARE"):
+            self.advance()
+            index = self.parse_expression()
+
+            if not self.check("RSQUARE"):
+                raise SyntaxError("Expected closing bracket")
+
+            self.advance()
+            node = ("INDEX", node, index)
+
+        return node
 
     def parse_prefix(self):
         token = self.current()
@@ -111,6 +126,23 @@ class Parser:
             self.advance()
             return ("BLOCK", expressions)
 
+        elif token == "LSQUARE":
+            self.advance()
+            elements = []
+
+            if not self.check("RSQUARE"):
+                elements.append(self.parse_expression())
+
+                while self.check("COMMA"):
+                    self.advance()
+                    elements.append(self.parse_expression())
+
+            if not self.check("RSQUARE"):
+                raise SyntaxError("Expected closing bracket")
+
+            self.advance()
+            return ("LIST", elements)
+
         elif token == "MINUS":
             self.advance()
             return ("NEGATE", self.parse_expression(8))
@@ -118,6 +150,10 @@ class Parser:
         elif token == "NOT":
             self.advance()
             return ("NOT", self.parse_expression(8))
+
+        elif token == "LEN":
+            self.advance()
+            return ("LEN", self.parse_expression(8))
 
         elif (
             isinstance(token, tuple)
