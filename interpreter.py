@@ -68,6 +68,30 @@ def evaluate(expression):
         result = evaluate(expression[1])
         return str(result)
 
+    elif operator == "LIST":
+        return [evaluate(element) for element in expression[1]]
+
+    elif operator == "LEN":
+        target = evaluate(expression[1])
+
+        if not isinstance(target, (list, str)):
+            raise ValueError("Only lists and strings can be used with len")
+
+        return len(target)
+
+    elif operator == "INDEX":
+        target = evaluate(expression[1])
+        index = evaluate(expression[2])
+
+        if not isinstance(target, (list, str)):
+            raise ValueError("Only lists and strings can be indexed")
+        if not isinstance(index, int) or isinstance(index, bool):
+            raise ValueError("Index must be an integer")
+        if not -len(target) <= index < len(target):
+            raise ValueError(f"Index {index} out of range")
+
+        return target[index]
+
     elif operator == "FUN":
         name = expression[1]
         parameters = expression[2]
@@ -126,6 +150,21 @@ def evaluate(expression):
         name = expression[1]
         arguments = expression[2]
 
+        if name == "concat":
+            if len(arguments) != 2:
+                raise ValueError("concat expects two arguments")
+
+            left = evaluate(arguments[0])
+            right = evaluate(arguments[1])
+
+            if isinstance(left, list) and isinstance(right, list):
+                return left + right
+
+            if isinstance(left, str) and isinstance(right, str):
+                return left + right
+
+            raise ValueError("concat expects two lists or two strings")
+
         if name not in functions:
             raise ValueError(f"Function '{name}' not defined")
 
@@ -168,6 +207,8 @@ def evaluate(expression):
         return left ** right
     elif operator == "EQUALS":
         return left == right
+    elif operator == "NOTEQUALS":
+        return left != right
     elif operator == "OR":
         return left or right
     elif operator == "AND":
