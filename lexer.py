@@ -60,7 +60,7 @@ class Lexer:
 
             elif current == "!":
                 if self.line[i+1] == "=":
-                    result.append("NOTEQUAL")
+                    result.append("NOTEQUALS")
                     i += 2
                     continue
                 else:
